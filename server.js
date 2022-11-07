@@ -18,25 +18,15 @@ dotenv.config();
 require("dotenv").config();
 require("dotenv").config();
 
-
 const db = knex({
-    client: "pg",
-    connection: {
-      host: process.env.host,
-      user:  process.env.user,
-      password: process.env.password,
-      database: process.env.database,
+  client: "pg",
+  connection: {
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
     },
+  },
 });
-  
-
-
-
-
-
-
-
-
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -44,7 +34,6 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(favicon(path.join(__dirname, "build", "favicon.ico")));
 app.use(express.static(path.join(__dirname, "build")));
-
 
 const clara = new Clarifai.App({
   apiKey: process.env.ApiKey,
@@ -58,8 +47,8 @@ app.use("/api", require("./routes/api/getImage"));
 app.use("/api", require("./routes/api/profile"));
 
 app.get("/*", function (req, res) {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
-  });
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
